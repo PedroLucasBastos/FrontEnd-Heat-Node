@@ -17,7 +17,8 @@ type User = {
 
 type AuthContextData = {
     user: User | null;
-    singInUrl: string;
+    signInUrl: string;
+    signOut: () => void;
 }
 
 type AuthResponse = {
@@ -40,7 +41,7 @@ export function AuthProvider(props: AuthProvider) {
     const [user, setUser] = useState<User | null>(null);
 
 
-    const singInUrl = `https://github.com/login/oauth/authorize?scope=user&client_id=ba3f5fe6295e715afc6a`;
+    const signInUrl = `https://github.com/login/oauth/authorize?scope=user&client_id=ba3f5fe6295e715afc6a`;
 
     async function signIn(githubCode: string) {
         const response = await api.post<AuthResponse>('authenticate', {
@@ -50,6 +51,11 @@ export function AuthProvider(props: AuthProvider) {
         const { token, user } = response.data;
         localStorage.setItem('@dowhile:token', token); //armazenando o token para que mesmo após fechar o navegador ele ainda tenha esse token salvo
         setUser(user);
+    }
+
+    function signOut() {
+        setUser(null);
+        localStorage.removeItem('@dowhile:token')
     }
 
     useEffect(() => {
@@ -78,7 +84,7 @@ export function AuthProvider(props: AuthProvider) {
 
 
     return (
-        <AuthContext.Provider value={{ singInUrl, user }}>
+        <AuthContext.Provider value={{ signInUrl, user, signOut }}>
             {props.children}
         </AuthContext.Provider>
     );
