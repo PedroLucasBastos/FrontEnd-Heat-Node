@@ -50,6 +50,7 @@ export function AuthProvider(props: AuthProvider) {
 
         const { token, user } = response.data;
         localStorage.setItem('@dowhile:token', token); //armazenando o token para que mesmo após fechar o navegador ele ainda tenha esse token salvo
+        api.defaults.headers.common.authorization = `Bearer ${token}`;
         setUser(user);
     }
 
